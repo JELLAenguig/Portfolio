@@ -1,0 +1,46 @@
+:root {
+  font-family: 'Sora', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #e7f0ff;
+  background-color: #070d1c;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body {
+  margin: 0;
+  scrollbar-gutter: stable;
+  background:
+    radial-gradient(circle at 20% -10%, rgba(56, 189, 248, 0.22) 10%, transparent 40%),
+    radial-gradient(circle at 90% 10%, rgba(28, 126, 214, 0.18) 10%, transparent 45%),
+    #070d1c;
+}
+
+#root {
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+}
