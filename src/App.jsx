@@ -55,32 +55,40 @@ const PROJECTS = [
     category: "UI/UX Design",
     tags: ["Figma", "E-commerce"],
     description:
-      "A comprehensive financial tracking dashboard with real-time data visualization and intuitive navigation.",
+      "InfiniteFlex is a modern shoe e-commerce UI concept designed for a smooth, visually engaging shopping experience.",
+    images: ["/projects/InfiniteFlex.png", "/projects/InfiniteFlex-2.png"],
     accent: "#38bdf8",
     year: "2025",
   },
   {
-    title: "Q-connect",
+    title: "Qnnect Queueing System",
     category: "Web Development",
-    tags: ["Figma", "Mobile", "Healthcare"],
+    tags: ["NextJs", "MongoDB", "Tailwind CSS", "TypeScript", "Zustand", "Recharts", "PostCSS"],
     description:
-      "Patient-centered healthcare application simplifying appointment booking and medical records.",
+      "Qnnect is a healthcare-focused queueing system that simplifies patient flow through smart kiosks, real-time tracking, and efficient service management.",
+    images: ["/projects/q-nnect.png", "/projects/q-nnect-2.png"],
+    appUrl: "https://qnnect.vercel.app/",
     accent: "#f472b6",
-    year: "2025",
+    year: "2026",
   },
 ];
-
-const FILTER_CATS = ["All", "UI/UX Design", "Web Development", "Web Design"];
 
 export default function Portfolio() {
   const cursorRef = useRef(null);
   const cursorDotRef = useRef(null);
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [activeProjectImage, setActiveProjectImage] = useState({});
 
-  const filteredProjects =
-    activeFilter === "All"
-      ? PROJECTS
-      : PROJECTS.filter((p) => p.category === activeFilter);
+  const cycleProjectImage = (title, totalImages, direction) => {
+    setActiveProjectImage((prev) => {
+      const current = prev[title] ?? 0;
+      const next = (current + direction + totalImages) % totalImages;
+      return { ...prev, [title]: next };
+    });
+  };
+
+  const setProjectImage = (title, index) => {
+    setActiveProjectImage((prev) => ({ ...prev, [title]: index }));
+  };
 
   useEffect(() => {
     // Scroll reveal
@@ -293,41 +301,86 @@ export default function Portfolio() {
         <p className="section-seq reveal">03 — Selected Work</p>
         <div className="work-header reveal" style={{ transitionDelay: "40ms" }}>
           <h2 className="section-title" style={{ marginBottom: 0 }}>Recent Projects</h2>
-          <div className="filter-pills">
-            {FILTER_CATS.map((cat) => (
-              <button
-                key={cat}
-                className={`filter-pill${activeFilter === cat ? " active" : ""}`}
-                onClick={() => setActiveFilter(cat)}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
         </div>
 
         <div className="projects-grid reveal" style={{ transitionDelay: "80ms" }}>
-          {filteredProjects.map((p) => (
+          {PROJECTS.map((p) => {
+            const projectImages = p.images?.length ? p.images : (p.image ? [p.image] : []);
+            const currentImage = Math.min(
+              activeProjectImage[p.title] ?? 0,
+              Math.max(projectImages.length - 1, 0)
+            );
+
+            return (
             <article key={p.title} className="project-card">
               <div className="project-preview">
-                <div className="project-mockup">
-                  <div className="mockup-bar">
-                    <div className="mockup-dot" style={{ background: "#ff5f57" }} />
-                    <div className="mockup-dot" style={{ background: "#ffbd2e" }} />
-                    <div className="mockup-dot" style={{ background: "#28c840" }} />
-                  </div>
-                  <div className="mockup-content">
-                    <div className="mock-line" style={{ width: "60%", background: p.accent + "33" }} />
-                    <div className="mock-line" style={{ width: "40%" }} />
-                    <div className="mock-blocks">
-                      <div className="mock-block" style={{ background: p.accent + "22" }} />
-                      <div className="mock-block" />
+                {projectImages.length > 0 ? (
+                  <img
+                    className="project-thumb"
+                    src={projectImages[currentImage]}
+                    alt={`${p.title} preview`}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="project-mockup">
+                    <div className="mockup-bar">
+                      <div className="mockup-dot" style={{ background: "#ff5f57" }} />
+                      <div className="mockup-dot" style={{ background: "#ffbd2e" }} />
+                      <div className="mockup-dot" style={{ background: "#28c840" }} />
+                    </div>
+                    <div className="mockup-content">
+                      <div className="mock-line" style={{ width: "60%", background: p.accent + "33" }} />
+                      <div className="mock-line" style={{ width: "40%" }} />
+                      <div className="mock-blocks">
+                        <div className="mock-block" style={{ background: p.accent + "22" }} />
+                        <div className="mock-block" />
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+                {projectImages.length > 1 && (
+                  <>
+                    <div className="project-image-controls">
+                      <button
+                        type="button"
+                        className="project-image-nav"
+                        onClick={() => cycleProjectImage(p.title, projectImages.length, -1)}
+                        aria-label={`Previous image for ${p.title}`}
+                      >
+                        ‹
+                      </button>
+                      <button
+                        type="button"
+                        className="project-image-nav"
+                        onClick={() => cycleProjectImage(p.title, projectImages.length, 1)}
+                        aria-label={`Next image for ${p.title}`}
+                      >
+                        ›
+                      </button>
+                    </div>
+                    <div className="project-image-dots" role="tablist" aria-label={`${p.title} images`}>
+                      {projectImages.map((_, index) => (
+                        <button
+                          type="button"
+                          key={`${p.title}-dot-${index}`}
+                          className={`project-image-dot${currentImage === index ? " active" : ""}`}
+                          onClick={() => setProjectImage(p.title, index)}
+                          aria-label={`Show image ${index + 1} for ${p.title}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
                 <div className="project-glow" style={{ background: p.accent }} />
                 <div className="project-overlay">
-                  <a className="view-btn" href="#">View Project ↗</a>
+                  <a
+                    className="view-btn"
+                    href={p.appUrl || "#"}
+                    target={p.appUrl ? "_blank" : undefined}
+                    rel={p.appUrl ? "noreferrer" : undefined}
+                  >
+                    View Project ↗
+                  </a>
                 </div>
               </div>
               <div className="project-info">
@@ -344,8 +397,9 @@ export default function Portfolio() {
                 </div>
               </div>
             </article>
-          ))}
-          {filteredProjects.length === 0 && (
+            );
+          })}
+          {PROJECTS.length === 0 && (
             <div style={{
               gridColumn: "1/-1",
               textAlign: "center",
