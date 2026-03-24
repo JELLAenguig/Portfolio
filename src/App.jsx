@@ -57,6 +57,7 @@ const PROJECTS = [
     description:
       "InfiniteFlex is a modern shoe e-commerce UI concept designed for a smooth, visually engaging shopping experience.",
     images: ["/projects/InfiniteFlex.png", "/projects/InfiniteFlex-2.png"],
+    appUrl: "https://www.figma.com/design/8iKKodglYkAivTcb2eX26b/InfiniteFlex?node-id=0-1&t=dtKfISJseodWNGLO-1",
     accent: "#38bdf8",
     year: "2025",
   },
