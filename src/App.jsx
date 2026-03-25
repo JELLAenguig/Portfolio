@@ -2,32 +2,46 @@ import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
 const NAV_LINKS = ["Home", "About", "Services", "Work", "Contact"];
+const FOCUS_AREAS = ["Branding", "UI/UX Design", "Web Dev", "Motion"];
+const ABOUT_TAGS = ["Problem Solver", "Detail-Oriented", "User Advocate", "Clean Code"];
+const APPROACH_STEPS = ["Research", "Design", "Build", "Refine"];
+const CONTACT_LINKS = [
+  { icon: "\u2709", label: "Email", href: "mailto:enguigj@gmail.com", text: "enguigj@gmail.com" },
+  {
+    icon: "in",
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/enguig-jellamae-u-000538245",
+    text: "enguig-jellamae",
+  },
+  { icon: "</>", label: "GitHub", href: "https://github.com/JELLAenguig", text: "JELLAenguig" },
+];
+const CURRENT_YEAR = new Date().getFullYear();
 
 const SERVICE_OFFERS = [
   {
     title: "UI/UX Design",
-    icon: "◈",
+    icon: "\u25C8",
     description:
       "Designing user-centered web and mobile interfaces in Figma with clear flows, wireframes, and polished visual systems.",
     num: "01",
   },
   {
     title: "Web Design",
-    icon: "⬡",
+    icon: "\u2B21",
     description:
       "Creating modern, responsive website layouts that align with brand identity and improve user engagement.",
     num: "02",
   },
   {
     title: "Frontend Development",
-    icon: "⟨/⟩",
+    icon: "\u27E8/\u27E9",
     description:
       "Building interactive, performant interfaces using React and Angular with clean, reusable components.",
     num: "03",
   },
   {
     title: "Basic Backend Development",
-    icon: "⬢",
+    icon: "\u2B22",
     description:
       "Implementing backend features and API integration using Node.js and Laravel to support core web app functionality.",
     num: "04",
@@ -72,6 +86,19 @@ const PROJECTS = [
     accent: "#f472b6",
     year: "2026",
   },
+  {
+    title: "R at R Automation",
+    category: "Web Development",
+    tags: ["Marketing Website", "SaaS", "Automation", "Security", "Energy Solutions"],
+    description:
+      "A modern SaaS-inspired marketing website built to present premium automation, security, and energy solutions for residential and commercial clients.",
+    images: ["/projects/ratr.png", "/projects/ratr-2.png"],
+    imageFit: "contain",
+    imagePosition: "center",
+    appUrl: "https://ratr.vercel.app/",
+    accent: "#f59e0b",
+    year: "2026",
+  },
 ];
 
 export default function Portfolio() {
@@ -92,75 +119,100 @@ export default function Portfolio() {
   };
 
   useEffect(() => {
-    // Scroll reveal
     const revealEls = document.querySelectorAll(".reveal");
-    const obs = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("visible");
-            obs.unobserve(e.target);
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
           }
         });
       },
       { threshold: 0.1 }
     );
-    revealEls.forEach((el) => obs.observe(el));
 
-    // Custom cursor
+    revealEls.forEach((el) => observer.observe(el));
+
     const cursor = cursorRef.current;
     const dot = cursorDotRef.current;
-    let mx = 0, my = 0, cx = 0, cy = 0;
+    let mouseX = 0;
+    let mouseY = 0;
+    let cursorX = 0;
+    let cursorY = 0;
+    let animationFrameId = 0;
 
-    const onMove = (e) => {
-      mx = e.clientX;
-      my = e.clientY;
-      if (dot) dot.style.transform = `translate(${mx - 2}px, ${my - 2}px)`;
+    const onMove = (event) => {
+      mouseX = event.clientX;
+      mouseY = event.clientY;
+
+      if (dot) {
+        dot.style.transform = `translate(${mouseX - 2}px, ${mouseY - 2}px)`;
+      }
     };
+
     const animate = () => {
-      cx += (mx - cx) * 0.1;
-      cy += (my - cy) * 0.1;
-      if (cursor) cursor.style.transform = `translate(${cx - 18}px, ${cy - 18}px)`;
-      requestAnimationFrame(animate);
+      cursorX += (mouseX - cursorX) * 0.1;
+      cursorY += (mouseY - cursorY) * 0.1;
+
+      if (cursor) {
+        cursor.style.transform = `translate(${cursorX - 18}px, ${cursorY - 18}px)`;
+      }
+
+      animationFrameId = window.requestAnimationFrame(animate);
     };
-    window.addEventListener("mousemove", onMove);
-    animate();
 
     const hoverEls = document.querySelectorAll("a, button, .offer-card, .project-card");
+    const handleMouseEnter = () => cursor?.classList.add("hover");
+    const handleMouseLeave = () => cursor?.classList.remove("hover");
+
+    window.addEventListener("mousemove", onMove);
     hoverEls.forEach((el) => {
-      el.addEventListener("mouseenter", () => cursor?.classList.add("hover"));
-      el.addEventListener("mouseleave", () => cursor?.classList.remove("hover"));
+      el.addEventListener("mouseenter", handleMouseEnter);
+      el.addEventListener("mouseleave", handleMouseLeave);
     });
+    animate();
 
     return () => {
-      obs.disconnect();
+      observer.disconnect();
       window.removeEventListener("mousemove", onMove);
+      window.cancelAnimationFrame(animationFrameId);
+      hoverEls.forEach((el) => {
+        el.removeEventListener("mouseenter", handleMouseEnter);
+        el.removeEventListener("mouseleave", handleMouseLeave);
+      });
     };
   }, []);
 
   return (
     <>
-      {/* ── CURSOR ── */}
+      {/* Cursor */}
       <div ref={cursorRef} className="cursor-ring" aria-hidden="true" />
       <div ref={cursorDotRef} className="cursor-dot" aria-hidden="true" />
 
-      {/* ── AMBIENT BLOBS ── */}
+      {/* Ambient blobs */}
       <div className="amb-a ambient" aria-hidden="true" />
       <div className="amb-b ambient" aria-hidden="true" />
       <div className="amb-c ambient" aria-hidden="true" />
 
-      {/* ── HEADER ── */}
+      {/* Header */}
       <header className="topbar">
-        <a href="#home" className="logo">JE<span>.</span></a>
+        <a href="#home" className="logo">
+          JE<span>.</span>
+        </a>
         <nav className="nav">
-          {NAV_LINKS.map((l) => (
-            <a key={l} href={`#${l.toLowerCase()}`}>{l}</a>
+          {NAV_LINKS.map((link) => (
+            <a key={link} href={`#${link.toLowerCase()}`}>
+              {link}
+            </a>
           ))}
         </nav>
-        <a className="talk-btn" href="mailto:enguigj@gmail.com">Let's Talk ↗</a>
+        <a className="talk-btn" href="mailto:enguigj@gmail.com">
+          Let's Talk {"->"}
+        </a>
       </header>
 
-      {/* ── HERO ── */}
+      {/* Hero */}
       <section id="home" className="hero">
         <div className="hero-inner">
           <div className="reveal">
@@ -171,17 +223,23 @@ export default function Portfolio() {
               <span className="line3">&amp; DEV</span>
             </h1>
             <p className="hero-desc">
-              Crafting seamless experiences through thoughtful design and clean,
-              scalable code — turning ideas into intuitive digital products.
+              Crafting seamless experiences through thoughtful design and clean, scalable code,
+              turning ideas into intuitive digital products.
             </p>
             <div className="hero-btns">
-              <a className="btn-primary" href="#work">View My Work</a>
-              <a className="btn-ghost" href="#contact">Contact Me ↗</a>
+              <a className="btn-primary" href="#work">
+                View My Work
+              </a>
+              <a className="btn-ghost" href="#contact">
+                Contact Me {"->"}
+              </a>
             </div>
             <div className="focus-chips">
               <span className="focus-label">Focus:</span>
-              {["Branding", "UI/UX Design", "Web Dev", "Motion"].map((s) => (
-                <span key={s} className="chip">{s}</span>
+              {FOCUS_AREAS.map((area) => (
+                <span key={area} className="chip">
+                  {area}
+                </span>
               ))}
             </div>
           </div>
@@ -193,7 +251,9 @@ export default function Portfolio() {
               <img
                 src="/profile.png"
                 alt="Jellamae Enguig"
-                onError={(e) => { e.target.style.display = "none"; }}
+                onError={(event) => {
+                  event.target.style.display = "none";
+                }}
               />
               <div className="hero-badge">
                 <div className="hero-badge-dot" />
@@ -214,40 +274,41 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* ── ABOUT ── */}
+      {/* About */}
       <section id="about" style={{ position: "relative", zIndex: 1, padding: "100px 48px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <p className="section-seq reveal">01 — About</p>
+          <p className="section-seq reveal">01 - About</p>
           <div className="about-grid reveal" style={{ transitionDelay: "60ms" }}>
             <div>
               <p className="about-lead">
-                I create user-centered websites and applications that are clear,
-                functional, and easy to use.
+                I create user-centered websites and applications that are clear, functional, and
+                easy to use.
               </p>
               <p className="about-copy">
-                My work is guided by both design and functionality, ensuring that every
-                interface is visually refined, intuitive, and built with purpose. I focus
-                on creating digital experiences that improve usability, simplify
-                interactions, and provide meaningful solutions for users.
+                My work is guided by both design and functionality, ensuring that every interface
+                is visually refined, intuitive, and built with purpose. I focus on creating
+                digital experiences that improve usability, simplify interactions, and provide
+                meaningful solutions for users.
               </p>
               <div className="tag-row">
-                {["Problem Solver", "Detail-Oriented", "User Advocate", "Clean Code"].map((t) => (
-                  <span key={t} className="tag">{t}</span>
+                {ABOUT_TAGS.map((tag) => (
+                  <span key={tag} className="tag">
+                    {tag}
+                  </span>
                 ))}
               </div>
             </div>
             <div>
               <div className="philosophy-card">
                 <p className="phil-label">Philosophy</p>
-                <p className="phil-quote">
-                  "I design with purpose and build with usability in mind."
-                </p>
+                <p className="phil-quote">"I design with purpose and build with usability in mind."</p>
                 <div className="phil-divider" />
                 <p className="phil-label">Approach</p>
                 <div className="approach-steps">
-                  {["Research", "Design", "Build", "Refine"].map((s, i) => (
-                    <span key={s} className="approach-step">
-                      {i > 0 ? "→ " : ""}{s}
+                  {APPROACH_STEPS.map((step, index) => (
+                    <span key={step} className="approach-step">
+                      {index > 0 ? "-> " : ""}
+                      {step}
                     </span>
                   ))}
                 </div>
@@ -259,20 +320,20 @@ export default function Portfolio() {
 
       <div className="section-divider" />
 
-      {/* ── SERVICES ── */}
+      {/* Services */}
       <section id="services" className="section">
-        <p className="section-seq reveal">02 — Services</p>
+        <p className="section-seq reveal">02 - Services</p>
         <h2 className="section-title reveal" style={{ transitionDelay: "40ms" }}>
           What I Offer
         </h2>
         <div className="offer-grid reveal" style={{ transitionDelay: "80ms" }}>
-          {SERVICE_OFFERS.map((o) => (
-            <article key={o.title} className="offer-card">
-              <div className="offer-num">{o.num}</div>
-              <div className="offer-icon-wrap">{o.icon}</div>
-              <h3 className="offer-title">{o.title}</h3>
-              <p className="offer-desc">{o.description}</p>
-              <div className="offer-arrow">→</div>
+          {SERVICE_OFFERS.map((offer) => (
+            <article key={offer.title} className="offer-card">
+              <div className="offer-num">{offer.num}</div>
+              <div className="offer-icon-wrap">{offer.icon}</div>
+              <h3 className="offer-title">{offer.title}</h3>
+              <p className="offer-desc">{offer.description}</p>
+              <div className="offer-arrow">-&gt;</div>
             </article>
           ))}
         </div>
@@ -280,15 +341,17 @@ export default function Portfolio() {
         <p className="marquee-label reveal">Tools &amp; Technologies</p>
         <div className="marquee-wrap reveal" style={{ transitionDelay: "60ms" }}>
           <div className="marquee-track">
-            {[...TOOLS, ...TOOLS].map((t, i) => (
-              <div key={`${t.name}-${i}`} className="tool-item">
+            {[...TOOLS, ...TOOLS].map((tool, index) => (
+              <div key={`${tool.name}-${index}`} className="tool-item">
                 <img
-                  src={t.logo}
-                  alt={t.name}
+                  src={tool.logo}
+                  alt={tool.name}
                   loading="lazy"
-                  onError={(e) => { e.target.style.display = "none"; }}
+                  onError={(event) => {
+                    event.target.style.display = "none";
+                  }}
                 />
-                <span>{t.name}</span>
+                <span>{tool.name}</span>
               </div>
             ))}
           </div>
@@ -297,117 +360,132 @@ export default function Portfolio() {
 
       <div className="section-divider" />
 
-      {/* ── WORK ── */}
+      {/* Work */}
       <section id="work" className="section">
-        <p className="section-seq reveal">03 — Selected Work</p>
+        <p className="section-seq reveal">03 - Selected Work</p>
         <div className="work-header reveal" style={{ transitionDelay: "40ms" }}>
-          <h2 className="section-title" style={{ marginBottom: 0 }}>Recent Projects</h2>
+          <h2 className="section-title" style={{ marginBottom: 0 }}>
+            Recent Projects
+          </h2>
         </div>
 
         <div className="projects-grid reveal" style={{ transitionDelay: "80ms" }}>
-          {PROJECTS.map((p) => {
-            const projectImages = p.images?.length ? p.images : (p.image ? [p.image] : []);
+          {PROJECTS.map((project) => {
+            const projectImages = project.images?.length ? project.images : project.image ? [project.image] : [];
             const currentImage = Math.min(
-              activeProjectImage[p.title] ?? 0,
+              activeProjectImage[project.title] ?? 0,
               Math.max(projectImages.length - 1, 0)
             );
 
             return (
-            <article key={p.title} className="project-card">
-              <div className="project-preview">
-                {projectImages.length > 0 ? (
-                  <img
-                    className="project-thumb"
-                    src={projectImages[currentImage]}
-                    alt={`${p.title} preview`}
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="project-mockup">
-                    <div className="mockup-bar">
-                      <div className="mockup-dot" style={{ background: "#ff5f57" }} />
-                      <div className="mockup-dot" style={{ background: "#ffbd2e" }} />
-                      <div className="mockup-dot" style={{ background: "#28c840" }} />
-                    </div>
-                    <div className="mockup-content">
-                      <div className="mock-line" style={{ width: "60%", background: p.accent + "33" }} />
-                      <div className="mock-line" style={{ width: "40%" }} />
-                      <div className="mock-blocks">
-                        <div className="mock-block" style={{ background: p.accent + "22" }} />
-                        <div className="mock-block" />
+              <article key={project.title} className="project-card">
+                <div className="project-preview">
+                  {projectImages.length > 0 ? (
+                    <img
+                      className="project-thumb"
+                      src={projectImages[currentImage]}
+                      alt={`${project.title} preview`}
+                      loading="lazy"
+                      style={{
+                        objectFit: project.imageFit ?? "cover",
+                        objectPosition: project.imagePosition ?? "center",
+                      }}
+                    />
+                  ) : (
+                    <div className="project-mockup">
+                      <div className="mockup-bar">
+                        <div className="mockup-dot" style={{ background: "#ff5f57" }} />
+                        <div className="mockup-dot" style={{ background: "#ffbd2e" }} />
+                        <div className="mockup-dot" style={{ background: "#28c840" }} />
+                      </div>
+                      <div className="mockup-content">
+                        <div
+                          className="mock-line"
+                          style={{ width: "60%", background: `${project.accent}33` }}
+                        />
+                        <div className="mock-line" style={{ width: "40%" }} />
+                        <div className="mock-blocks">
+                          <div className="mock-block" style={{ background: `${project.accent}22` }} />
+                          <div className="mock-block" />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
-                {projectImages.length > 1 && (
-                  <>
-                    <div className="project-image-controls">
-                      <button
-                        type="button"
-                        className="project-image-nav"
-                        onClick={() => cycleProjectImage(p.title, projectImages.length, -1)}
-                        aria-label={`Previous image for ${p.title}`}
-                      >
-                        ‹
-                      </button>
-                      <button
-                        type="button"
-                        className="project-image-nav"
-                        onClick={() => cycleProjectImage(p.title, projectImages.length, 1)}
-                        aria-label={`Next image for ${p.title}`}
-                      >
-                        ›
-                      </button>
-                    </div>
-                    <div className="project-image-dots" role="tablist" aria-label={`${p.title} images`}>
-                      {projectImages.map((_, index) => (
+                  )}
+                  {projectImages.length > 1 && (
+                    <>
+                      <div className="project-image-controls">
                         <button
                           type="button"
-                          key={`${p.title}-dot-${index}`}
-                          className={`project-image-dot${currentImage === index ? " active" : ""}`}
-                          onClick={() => setProjectImage(p.title, index)}
-                          aria-label={`Show image ${index + 1} for ${p.title}`}
-                        />
-                      ))}
-                    </div>
-                  </>
-                )}
-                <div className="project-glow" style={{ background: p.accent }} />
-                <div className="project-overlay">
-                  <a
-                    className="view-btn"
-                    href={p.appUrl || "#"}
-                    target={p.appUrl ? "_blank" : undefined}
-                    rel={p.appUrl ? "noreferrer" : undefined}
-                  >
-                    View Project ↗
-                  </a>
+                          className="project-image-nav"
+                          onClick={() => cycleProjectImage(project.title, projectImages.length, -1)}
+                          aria-label={`Previous image for ${project.title}`}
+                        >
+                          &#8249;
+                        </button>
+                        <button
+                          type="button"
+                          className="project-image-nav"
+                          onClick={() => cycleProjectImage(project.title, projectImages.length, 1)}
+                          aria-label={`Next image for ${project.title}`}
+                        >
+                          &#8250;
+                        </button>
+                      </div>
+                      <div className="project-image-dots" role="tablist" aria-label={`${project.title} images`}>
+                        {projectImages.map((_, index) => (
+                          <button
+                            type="button"
+                            key={`${project.title}-dot-${index}`}
+                            className={`project-image-dot${currentImage === index ? " active" : ""}`}
+                            onClick={() => setProjectImage(project.title, index)}
+                            aria-label={`Show image ${index + 1} for ${project.title}`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                  <div className="project-glow" style={{ background: project.accent }} />
+                  <div className="project-overlay">
+                    <a
+                      className="view-btn"
+                      href={project.appUrl || "#"}
+                      target={project.appUrl ? "_blank" : undefined}
+                      rel={project.appUrl ? "noreferrer" : undefined}
+                    >
+                      View Project {"->"}
+                    </a>
+                  </div>
                 </div>
-              </div>
-              <div className="project-info">
-                <div className="project-meta">
-                  <span className="project-cat" style={{ color: p.accent }}>{p.category}</span>
-                  <span className="project-year">{p.year}</span>
+                <div className="project-info">
+                  <div className="project-meta">
+                    <span className="project-cat" style={{ color: project.accent }}>
+                      {project.category}
+                    </span>
+                    <span className="project-year">{project.year}</span>
+                  </div>
+                  <h3 className="project-title">{project.title}</h3>
+                  <p className="project-desc">{project.description}</p>
+                  <div className="project-tags">
+                    {project.tags.map((tag) => (
+                      <span key={tag} className="project-tag">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <h3 className="project-title">{p.title}</h3>
-                <p className="project-desc">{p.description}</p>
-                <div className="project-tags">
-                  {p.tags.map((t) => (
-                    <span key={t} className="project-tag">{t}</span>
-                  ))}
-                </div>
-              </div>
-            </article>
+              </article>
             );
           })}
           {PROJECTS.length === 0 && (
-            <div style={{
-              gridColumn: "1/-1",
-              textAlign: "center",
-              padding: "60px 0",
-              color: "var(--muted)",
-              fontSize: "0.9rem",
-            }}>
+            <div
+              style={{
+                gridColumn: "1/-1",
+                textAlign: "center",
+                padding: "60px 0",
+                color: "var(--muted)",
+                fontSize: "0.9rem",
+              }}
+            >
               No projects in this category yet.
             </div>
           )}
@@ -416,20 +494,22 @@ export default function Portfolio() {
 
       <div className="section-divider" />
 
-      {/* ── CONTACT ── */}
+      {/* Contact */}
       <section id="contact" style={{ position: "relative", zIndex: 1, padding: "100px 48px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative" }}>
           <div className="contact-inner reveal">
-            <p className="section-seq">04 — Contact</p>
+            <p className="section-seq">04 - Contact</p>
             <h2 className="contact-title">
               Looking for someone to design and build your next digital product?
             </h2>
             <p className="contact-sub">
-              I'm currently available for freelance projects. Let's create something
-              remarkable together.
+              I'm currently available for freelance projects. Let's create something remarkable
+              together.
             </p>
             <div className="contact-btns">
-              <a className="btn-primary" href="mailto:enguigj@gmail.com">Say Hello ↗</a>
+              <a className="btn-primary" href="mailto:enguigj@gmail.com">
+                Say Hello {"->"}
+              </a>
               <a
                 className="btn-ghost"
                 href="https://github.com/JELLAenguig"
@@ -442,22 +522,12 @@ export default function Portfolio() {
           </div>
 
           <div className="contact-aside reveal" style={{ transitionDelay: "80ms" }}>
-            {[
-              { icon: "✉", label: "Email", href: "mailto:enguigj@gmail.com", text: "enguigj@gmail.com" },
-              { icon: "in", label: "LinkedIn", href: "https://www.linkedin.com/in/enguig-jellamae-u-000538245", text: "enguig-jellamae" },
-              { icon: "⌥", label: "GitHub", href: "https://github.com/JELLAenguig", text: "JELLAenguig" },
-            ].map((l) => (
-              <a
-                key={l.label}
-                className="contact-link"
-                href={l.href}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span className="contact-link-icon">{l.icon}</span>
+            {CONTACT_LINKS.map((link) => (
+              <a key={link.label} className="contact-link" href={link.href} target="_blank" rel="noreferrer">
+                <span className="contact-link-icon">{link.icon}</span>
                 <div>
-                  <div className="contact-link-label">{l.label}</div>
-                  <div>{l.text}</div>
+                  <div className="contact-link-label">{link.label}</div>
+                  <div>{link.text}</div>
                 </div>
               </a>
             ))}
@@ -465,7 +535,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
+      {/* Footer */}
       <footer className="footer">
         <span className="footer-name">Jellamae Enguig</span>
         <div className="footer-links">
@@ -477,7 +547,7 @@ export default function Portfolio() {
             GitHub
           </a>
         </div>
-        <span className="footer-copy">© 2025 Jellamae Enguig</span>
+        <span className="footer-copy">&copy; {CURRENT_YEAR} Jellamae Enguig</span>
       </footer>
     </>
   );
