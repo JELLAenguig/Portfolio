@@ -4,7 +4,6 @@ import "./App.css";
 const NAV_LINKS = ["Home", "About", "Services", "Work", "Contact"];
 const FOCUS_AREAS = ["Branding", "UI/UX Design", "Web Dev", "Motion"];
 const ABOUT_TAGS = ["Problem Solver", "Detail-Oriented", "User Advocate", "Clean Code"];
-const APPROACH_STEPS = ["Research", "Design", "Build", "Refine"];
 const CONTACT_LINKS = [
   { icon: "\u2709", label: "Email", href: "mailto:enguigj@gmail.com", text: "enguigj@gmail.com" },
   {
@@ -65,15 +64,28 @@ const TOOLS = [
 
 const PROJECTS = [
   {
-    title: "InfiniteFlex",
+    title: "Kusinas Restaurant Website",
     category: "UI/UX Design",
-    tags: ["Figma", "E-commerce"],
+    tags: ["Figma", "Restaurant Website", "Filipino Cuisine"],
     description:
-      "InfiniteFlex is a modern shoe e-commerce UI concept designed for a smooth, visually engaging shopping experience.",
-    images: ["/projects/InfiniteFlex.png", "/projects/InfiniteFlex-2.png"],
-    appUrl: "https://www.figma.com/design/8iKKodglYkAivTcb2eX26b/InfiniteFlex?node-id=0-1&t=dtKfISJseodWNGLO-1",
-    accent: "#38bdf8",
-    year: "2025",
+      "A warm, modern UI/UX concept for a Filipino restaurant website, designed to highlight the menu, brand story, and dining experience in a visually inviting way.",
+    images: ["/projects/Home page - Kusinas.png", "/projects/Menu thumbnail-Kusinas.png"],
+    appUrl: "https://www.figma.com/design/HtdIlvC2Unv65uywF9PjrC/Kusina-s?node-id=156-194&t=TkrQRGeyud2stCBc-1",
+    accent: "#fb7185",
+    year: "2026",
+  },
+  {
+    title: "Ascend",
+    category: "Web Development",
+    tags: ["Learning Platform", "Productivity", "Dashboard", "Web App"],
+    description:
+      "A focused web platform concept for structured learning and progress tracking, designed to help users stay organized, motivated, and consistent.",
+    images: ["/projects/ascendworkspace.png", "/projects/ascendprogress.png"],
+    imageFit: "contain",
+    imagePosition: "center",
+    appUrl: "https://ascendlearn.app/",
+    accent: "#22c55e",
+    year: "2026",
   },
   {
     title: "Qnnect Queueing System",
@@ -95,7 +107,7 @@ const PROJECTS = [
     images: ["/projects/ratr.png", "/projects/ratr-2.png"],
     imageFit: "contain",
     imagePosition: "center",
-    appUrl: "https://ratr.vercel.app/",
+    appUrl: "https://ratrhomeauto.com/",
     accent: "#f59e0b",
     year: "2026",
   },
@@ -208,12 +220,15 @@ export default function Portfolio() {
           ))}
         </nav>
         <a className="talk-btn" href="mailto:enguigj@gmail.com">
-          Let's Talk {"->"}
+          Let's Talk
         </a>
       </header>
 
       {/* Hero */}
       <section id="home" className="hero">
+        <div className="hero-name-bg" aria-hidden="true">
+          JELLAMAE
+        </div>
         <div className="hero-inner">
           <div className="reveal">
             <p className="hero-kicker">Hi, I am Jellamae Enguig</p>
@@ -231,7 +246,7 @@ export default function Portfolio() {
                 View My Work
               </a>
               <a className="btn-ghost" href="#contact">
-                Contact Me {"->"}
+                Contact Me
               </a>
             </div>
             <div className="focus-chips">
@@ -255,15 +270,6 @@ export default function Portfolio() {
                   event.target.style.display = "none";
                 }}
               />
-              <div className="hero-badge">
-                <div className="hero-badge-dot" />
-                <div>
-                  <div style={{ fontSize: "0.68rem", color: "var(--muted)", marginBottom: 2 }}>
-                    Available for
-                  </div>
-                  <strong>Freelance Projects</strong>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -302,16 +308,6 @@ export default function Portfolio() {
               <div className="philosophy-card">
                 <p className="phil-label">Philosophy</p>
                 <p className="phil-quote">"I design with purpose and build with usability in mind."</p>
-                <div className="phil-divider" />
-                <p className="phil-label">Approach</p>
-                <div className="approach-steps">
-                  {APPROACH_STEPS.map((step, index) => (
-                    <span key={step} className="approach-step">
-                      {index > 0 ? "-> " : ""}
-                      {step}
-                    </span>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
@@ -445,16 +441,18 @@ export default function Portfolio() {
                     </>
                   )}
                   <div className="project-glow" style={{ background: project.accent }} />
-                  <div className="project-overlay">
-                    <a
-                      className="view-btn"
-                      href={project.appUrl || "#"}
-                      target={project.appUrl ? "_blank" : undefined}
-                      rel={project.appUrl ? "noreferrer" : undefined}
-                    >
-                      View Project {"->"}
-                    </a>
-                  </div>
+                  {project.appUrl && (
+                    <div className="project-overlay">
+                      <a
+                        className="view-btn"
+                        href={project.appUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        View Project
+                      </a>
+                    </div>
+                  )}
                 </div>
                 <div className="project-info">
                   <div className="project-meta">
@@ -508,7 +506,7 @@ export default function Portfolio() {
             </p>
             <div className="contact-btns">
               <a className="btn-primary" href="mailto:enguigj@gmail.com">
-                Say Hello {"->"}
+                Say Hello
               </a>
               <a
                 className="btn-ghost"
